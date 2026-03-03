@@ -1,0 +1,20 @@
+<Project>
+  <!-- Pick common XIVLauncherCN locations when DALAMUD_HOME is not set. -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows')) and '$(DALAMUD_HOME)' == ''">
+    <_DalamudHomeCnRoaming>$(appdata)\XIVLauncherCN\addon\Hooks\dev</_DalamudHomeCnRoaming>
+    <_DalamudHomeCnRoamingSoil>$(appdata)\XIVLauncherCN (Soil)\addon\Hooks\dev</_DalamudHomeCnRoamingSoil>
+    <_DalamudHomeCnRoamingDalamud>$(appdata)\XIVLauncherCN\dalamud\Hooks\dev</_DalamudHomeCnRoamingDalamud>
+    <_DalamudHomeCnLocal>$(LOCALAPPDATA)\XIVLauncherCN\addon\Hooks\dev</_DalamudHomeCnLocal>
+    <_DalamudHomeCnLocalDalamud>$(LOCALAPPDATA)\XIVLauncherCN\dalamud\Hooks\dev</_DalamudHomeCnLocalDalamud>
+    <_DalamudHomeCnPortableAddon>$(XIVLAUNCHERCN_HOME)\addon\Hooks\dev</_DalamudHomeCnPortableAddon>
+    <_DalamudHomeCnPortableDalamud>$(XIVLAUNCHERCN_HOME)\dalamud\Hooks\dev</_DalamudHomeCnPortableDalamud>
+
+    <DALAMUD_HOME Condition="Exists('$(_DalamudHomeCnRoaming)')">$(_DalamudHomeCnRoaming)</DALAMUD_HOME>
+    <DALAMUD_HOME Condition="'$(DALAMUD_HOME)' == '' and Exists('$(_DalamudHomeCnRoamingSoil)')">$(_DalamudHomeCnRoamingSoil)</DALAMUD_HOME>
+    <DALAMUD_HOME Condition="'$(DALAMUD_HOME)' == '' and Exists('$(_DalamudHomeCnRoamingDalamud)')">$(_DalamudHomeCnRoamingDalamud)</DALAMUD_HOME>
+    <DALAMUD_HOME Condition="'$(DALAMUD_HOME)' == '' and Exists('$(_DalamudHomeCnLocal)')">$(_DalamudHomeCnLocal)</DALAMUD_HOME>
+    <DALAMUD_HOME Condition="'$(DALAMUD_HOME)' == '' and Exists('$(_DalamudHomeCnLocalDalamud)')">$(_DalamudHomeCnLocalDalamud)</DALAMUD_HOME>
+    <DALAMUD_HOME Condition="'$(DALAMUD_HOME)' == '' and '$(XIVLAUNCHERCN_HOME)' != '' and Exists('$(_DalamudHomeCnPortableAddon)')">$(_DalamudHomeCnPortableAddon)</DALAMUD_HOME>
+    <DALAMUD_HOME Condition="'$(DALAMUD_HOME)' == '' and '$(XIVLAUNCHERCN_HOME)' != '' and Exists('$(_DalamudHomeCnPortableDalamud)')">$(_DalamudHomeCnPortableDalamud)</DALAMUD_HOME>
+  </PropertyGroup>
+</Project>
