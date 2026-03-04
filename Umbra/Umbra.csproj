@@ -8,9 +8,9 @@
     <PropertyGroup>
         <Authors>Una</Authors>
         <Company>Una-XIV</Company>
-        <Version>3.1.11.1101</Version>
-        <AssemblyVersion>3.1.11.1101</AssemblyVersion>
-        <FileVersion>3.1.11.1101</FileVersion>
+        <Version>3.1.12.1201</Version>
+        <AssemblyVersion>3.1.12.1201</AssemblyVersion>
+        <FileVersion>3.1.12.1201</FileVersion>
         <Description>Umbra UI</Description>
         <Copyright>(C)2025, by Una</Copyright>
         <PackageProjectUrl>https://github.com/una-xiv/umbra</PackageProjectUrl>

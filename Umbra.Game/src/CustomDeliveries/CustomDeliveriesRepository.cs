@@ -1,4 +1,4 @@
-﻿using Dalamud.Utility;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -88,15 +88,15 @@ internal sealed unsafe class CustomDeliveriesRepository : ICustomDeliveriesRepos
 
         DeliveriesRemainingThisWeek = ssm->GetRemainingAllowances();
 
-        var adjustedTimestamp             = ssm->TimeAdjustmentForBonusGuarantee + FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.GetServerTime();
-        var npcCount                      = ssm->SatisfactionRanks.Length;
-        var calculatedBonusGuaranteeRowId = (uint)((adjustedTimestamp - 1657008000) / 604800 % npcCount);
-        var bonusGuaranteeRowId           = ssm->BonusGuaranteeRowId != 0xFF ? ssm->BonusGuaranteeRowId : calculatedBonusGuaranteeRowId;
-        var bonusGuaranteeSheet           = DataManager.GetExcelSheet<SatisfactionBonusGuarantee>();
-        var hasBonusGuaranteeRow          = bonusGuaranteeSheet.TryGetRow(bonusGuaranteeRowId, out var satisfactionBonusGuarentee);
+        var adjustedTimestamp               = ssm->TimeAdjustmentForBonusGuarantee + FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.GetServerTime();
+        var npcCount                        = ssm->SatisfactionRanks.Length;
+        var satisfactionBonusGuaranteeSheet = DataManager.GetExcelSheet<SatisfactionBonusGuarantee>();
+        var calculatedBonusGuaranteeRowId   = (uint)((adjustedTimestamp - 1657008000) / 604800 % satisfactionBonusGuaranteeSheet.Count);
+        var bonusGuaranteeRowId             = ssm->BonusGuaranteeRowId != 0xFF ? ssm->BonusGuaranteeRowId : calculatedBonusGuaranteeRowId;
+        var hasBonusGuaranteeRow            = satisfactionBonusGuaranteeSheet.TryGetRow(bonusGuaranteeRowId, out var satisfactionBonusGuarentee);
 
         if (!hasBonusGuaranteeRow && bonusGuaranteeRowId != calculatedBonusGuaranteeRowId)
-            hasBonusGuaranteeRow = bonusGuaranteeSheet.TryGetRow(calculatedBonusGuaranteeRowId, out satisfactionBonusGuarentee);
+            hasBonusGuaranteeRow = satisfactionBonusGuaranteeSheet.TryGetRow(calculatedBonusGuaranteeRowId, out satisfactionBonusGuarentee);
 
         for (var i = 0; i < npcCount; i++) {
             byte heartCount    = ssm->SatisfactionRanks[i]; // 1 ~ 5 (Hearts in the UI)
