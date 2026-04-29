@@ -32,7 +32,14 @@ internal sealed unsafe class MacroIconProvider : IMacroIconProvider
     public MacroIconProvider(IDataManager dataManager, IGameInteropProvider interopProvider)
     {
         DataManager = dataManager;
-        interopProvider.InitializeFromAttributes(this);
+
+        try {
+            interopProvider.InitializeFromAttributes(this);
+        } catch (Exception e) {
+            Logger.Warning(
+                $"Failed to initialize macro icon signature. Advanced macro icon resolution will stay disabled until upstream signatures are updated. {e.Message}"
+            );
+        }
     }
 
     /// <inheritdoc/>

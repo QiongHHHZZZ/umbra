@@ -1,6 +1,5 @@
+using Dalamud.Game.Chat;
 using Dalamud.Game.ClientState.Fates;
-using Dalamud.Game.Text;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace Umbra.Markers.Library;
@@ -240,13 +239,11 @@ internal sealed partial class OccultCoffersMarkerFactory : WorldMarkerFactory
         _hasPlacedMapMarkers = false;
     }
 
-    private void OnChatMessage(
-        XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled
-    )
+    private void OnChatMessage(IHandleableChatMessage message)
     {
         if (!_isListeningForNotifications) return;
 
-        var positions = ChatLocationFilter.FilterPositions(message.TextValue.Trim(), _player.Position, OccultCofferPositions[_zoneManager.CurrentZone.TerritoryId]);
+        var positions = ChatLocationFilter.FilterPositions(message.Message.TextValue.Trim(), _player.Position, OccultCofferPositions[_zoneManager.CurrentZone.TerritoryId]);
 
         if (positions != null) _detectedOccultCofferPositions = positions;
 

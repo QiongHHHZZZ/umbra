@@ -15,7 +15,14 @@ internal unsafe class RetainerListRequestProvider
     public RetainerListRequestProvider(IPlayer player, IGameInteropProvider interopProvider)
     {
         _player = player;
-        interopProvider.InitializeFromAttributes(this);
+
+        try {
+            interopProvider.InitializeFromAttributes(this);
+        } catch (Exception e) {
+            Logger.Warning(
+                $"Failed to initialize retainer list signature. Manual retainer refresh will stay disabled until upstream signatures are updated. {e.Message}"
+            );
+        }
     }
 
     /// <summary>

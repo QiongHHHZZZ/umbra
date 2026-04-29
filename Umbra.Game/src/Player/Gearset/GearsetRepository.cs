@@ -18,7 +18,7 @@ internal sealed class GearsetRepository : IGearsetRepository, IDisposable
     private readonly Dictionary<ushort, Gearset> _gearsets      = [];
     private readonly Dictionary<ushort, Gearset> _validGearsets = [];
 
-    private readonly Hook<RaptureGearsetModule.Delegates.LinkGlamourPlate> _linkGlamourPlateHook;
+    private readonly Hook<RaptureGearsetModule.Delegates.LinkGlamourPlate>? _linkGlamourPlateHook;
 
     private readonly IPlayer _player;
 
@@ -30,12 +30,18 @@ internal sealed class GearsetRepository : IGearsetRepository, IDisposable
     {
         _player = player;
 
-        _linkGlamourPlateHook = interopProvider.HookFromAddress<RaptureGearsetModule.Delegates.LinkGlamourPlate>(
-            RaptureGearsetModule.MemberFunctionPointers.LinkGlamourPlate,
-            OnLinkGlamourPlateToGearset
-        );
+        try {
+            _linkGlamourPlateHook = interopProvider.HookFromAddress<RaptureGearsetModule.Delegates.LinkGlamourPlate>(
+                RaptureGearsetModule.MemberFunctionPointers.LinkGlamourPlate,
+                OnLinkGlamourPlateToGearset
+            );
 
-        _linkGlamourPlateHook.Enable();
+            _linkGlamourPlateHook.Enable();
+        } catch (Exception e) {
+            Logger.Warning(
+                $"Failed to initialize glamour plate hook. Gearset glamour relink support will stay disabled until upstream interop is updated. {e.Message}"
+            );
+        }
 
         for (ushort i = 0; i < 100; i++) {
             var gearset = new Gearset(i, categoryRepository, player);
@@ -80,7 +86,10 @@ internal sealed class GearsetRepository : IGearsetRepository, IDisposable
 
     private unsafe void OnLinkGlamourPlateToGearset(RaptureGearsetModule* gsm, int gearsetId, byte glamourPlateId)
     {
-        _linkGlamourPlateHook.Original(gsm, gearsetId, glamourPlateId);
+        var hook = _linkGlamourPlateHook;
+        if (hook == null) return;
+
+        hook.Original(gsm, gearsetId, glamourPlateId);
 
         if (CurrentGearset?.Id == gearsetId) {
             // The game does not apply the linked glamour plates until the gearset itself is reequipped.
@@ -99,7 +108,7 @@ internal sealed class GearsetRepository : IGearsetRepository, IDisposable
     {
         _gearsets.Clear();
         _validGearsets.Clear();
-        _linkGlamourPlateHook.Dispose();
+        _linkGlamourPlateHook?.Dispose();
         CurrentGearset = null;
 
         foreach (var handler in OnGearsetCreated?.GetInvocationList() ?? [])
@@ -193,10 +202,11 @@ internal sealed class GearsetRepository : IGearsetRepository, IDisposable
         RaptureGearsetModule* gsm = RaptureGearsetModule.Instance();
         if (gsm == null) return;
 
-        sbyte newId = gsm->CreateGearset();
+        int newId = gsm->CreateGearset();
 
         if (newId == -1) {
             Logger.Error($"Failed to create gearset.");
+            return;
         }
 
         _gearsets[(ushort)newId].Sync();

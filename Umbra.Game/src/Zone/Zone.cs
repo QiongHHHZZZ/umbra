@@ -2,6 +2,8 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using System.Numerics;
 using Map = FFXIVClientStructs.FFXIV.Client.Game.UI.Map;
+using MapMarkerData = FFXIVClientStructs.FFXIV.Client.Game.UI.MapMarkerData;
+using MarkerInfo = FFXIVClientStructs.FFXIV.Client.Game.UI.MarkerInfo;
 using Sheet = Lumina.Excel.Sheets;
 
 namespace Umbra.Game;
@@ -126,32 +128,11 @@ internal sealed class Zone : IZone
                     .ToList()
             );
 
-            DynamicMarkers.AddRange(
-                map->CustomTalkMarkers
-                    .ToList()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->CustomTalkMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
 
-            DynamicMarkers.AddRange(
-                map->GemstoneTraderMarkers
-                    .ToList()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->GemstoneTraderMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
 
-            DynamicMarkers.AddRange(
-                map->GuildLeveAssignmentMarkers
-                    .ToList()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->GuildLeveAssignmentMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
 
             DynamicMarkers.AddRange(
                 map->HousingMarkers
@@ -180,23 +161,9 @@ internal sealed class Zone : IZone
                     .ToList()
             );
 
-            DynamicMarkers.AddRange(
-                map->TripleTriadMarkers
-                    .ToList()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->TripleTriadMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
 
-            DynamicMarkers.AddRange(
-                map->UnacceptedQuestMarkers
-                    .ToList()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->UnacceptedQuestMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
         }
 
         lock (WeatherForecast) {
@@ -213,6 +180,21 @@ internal sealed class Zone : IZone
 
                 CurrentWeather = new(time, timeString, WeatherForecast[0].Name, WeatherForecast[0].IconId);
             }
+        }
+    }
+
+    private void TryAddDynamicMarkers(Func<IEnumerable<MapMarkerData>> markerSource)
+    {
+        try {
+            DynamicMarkers.AddRange(
+                markerSource()
+                    .Where(m => m.MapId == Id)
+                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
+                    .ToList()
+            );
+        } catch (OverflowException) {
+            // Some native marker containers are not initialized consistently after API 15 updates.
+            // Skip the malformed source so zone data, coordinates, weather and other markers still work.
         }
     }
 

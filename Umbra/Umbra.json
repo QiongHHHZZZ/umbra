@@ -5,6 +5,7 @@
   "InternalName": "Umbra",
   "Punchline":  "Adds fully customizable toolbars and 3D world markers to the game.",
   "RepoUrl": "https://github.com/una-xiv/umbra",
+  "DalamudApiLevel": 15,
   "Tags": [
     "ui",
 	"marker",

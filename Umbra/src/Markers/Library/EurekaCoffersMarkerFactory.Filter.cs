@@ -1,18 +1,15 @@
-using Dalamud.Game.Text;
-using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Chat;
 
 namespace Umbra.Markers.Library;
 
 internal sealed partial class EurekaCoffersMarkerFactory
 {
-    private void OnChatMessage(
-        XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled
-    )
+    private void OnChatMessage(IHandleableChatMessage message)
     {
         if (!_isListeningForNotifications) return;
 
         var positions = ChatLocationFilter.FilterPositions(
-            message.TextValue.Trim(),
+            message.Message.TextValue.Trim(),
             _player.Position,
             CofferPositions[_zoneManager.CurrentZone.TerritoryId]
         );
