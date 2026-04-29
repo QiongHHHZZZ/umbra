@@ -134,32 +134,11 @@ internal sealed class Zone : IZone
 
             TryAddDynamicMarkers(() => map->GuildLeveAssignmentMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
 
-            DynamicMarkers.AddRange(
-                map->HousingMarkers
-                    .ToArray()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->HousingMarkers.ToArray().SelectMany(i => i.MarkerData.ToList()));
 
-            DynamicMarkers.AddRange(
-                map->LevequestMarkers
-                    .ToArray()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->LevequestMarkers.ToArray().SelectMany(i => i.MarkerData.ToList()));
 
-            DynamicMarkers.AddRange(
-                map->QuestMarkers
-                    .ToArray()
-                    .SelectMany(i => i.MarkerData.ToList())
-                    .Where(m => m.MapId == Id)
-                    .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
-                    .ToList()
-            );
+            TryAddDynamicMarkers(() => map->QuestMarkers.ToArray().SelectMany(i => i.MarkerData.ToList()));
 
             TryAddDynamicMarkers(() => map->TripleTriadMarkers.ToList().SelectMany(i => i.MarkerData.ToList()));
 
@@ -192,7 +171,7 @@ internal sealed class Zone : IZone
                     .Select(m => _markerFactory.FromMapMarkerData(MapSheet, m))
                     .ToList()
             );
-        } catch (OverflowException) {
+        } catch (Exception e) when (e is OverflowException or NullReferenceException) {
             // Some native marker containers are not initialized consistently after API 15 updates.
             // Skip the malformed source so zone data, coordinates, weather and other markers still work.
         }

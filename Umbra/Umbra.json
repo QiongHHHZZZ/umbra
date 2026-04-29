@@ -1,10 +1,10 @@
 {
-  "Author": "Una",
+  "Author": "Una, QiongHHHZZZ(国服适配)",
   "Name": "Umbra XIV",
-  "Description": "Consolidates common UI elements and actions into a single uniform interface in the form of a set of highly customizable toolbars.",
+  "Description": "高度可定制的工具栏与 3D 世界标记插件。",
   "InternalName": "Umbra",
-  "Punchline":  "Adds fully customizable toolbars and 3D world markers to the game.",
-  "RepoUrl": "https://github.com/una-xiv/umbra",
+  "Punchline":  "为游戏添加高度可定制的工具栏与 3D 世界标记。",
+  "RepoUrl": "https://github.com/QiongHHHZZZ/umbra",
   "DalamudApiLevel": 15,
   "Tags": [
     "ui",

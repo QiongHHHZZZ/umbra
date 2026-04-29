@@ -6,14 +6,14 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Authors>Una</Authors>
+        <Authors>Una, QiongHHHZZZ(国服适配)</Authors>
         <Company>Una-XIV</Company>
-        <Version>3.1.12.1206</Version>
-        <AssemblyVersion>3.1.12.1206</AssemblyVersion>
-        <FileVersion>3.1.12.1206</FileVersion>
-        <Description>Umbra UI</Description>
+        <Version>3.1.12.1207</Version>
+        <AssemblyVersion>3.1.12.1207</AssemblyVersion>
+        <FileVersion>3.1.12.1207</FileVersion>
+        <Description>高度可定制的工具栏与 3D 世界标记插件。</Description>
         <Copyright>(C)2025, by Una</Copyright>
-        <PackageProjectUrl>https://github.com/una-xiv/umbra</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/QiongHHHZZZ/umbra</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
