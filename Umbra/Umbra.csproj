@@ -8,9 +8,9 @@
     <PropertyGroup>
         <Authors>Una, QiongHHHZZZ(国服适配)</Authors>
         <Company>Una-XIV</Company>
-        <Version>3.1.13.1208</Version>
-        <AssemblyVersion>3.1.13.1208</AssemblyVersion>
-        <FileVersion>3.1.13.1208</FileVersion>
+        <Version>3.1.13.1300</Version>
+        <AssemblyVersion>3.1.13.1300</AssemblyVersion>
+        <FileVersion>3.1.13.1300</FileVersion>
         <Description>高度可定制的工具栏与 3D 世界标记插件。</Description>
         <Copyright>(C)2025, by Una</Copyright>
         <PackageProjectUrl>https://github.com/QiongHHHZZZ/umbra</PackageProjectUrl>
