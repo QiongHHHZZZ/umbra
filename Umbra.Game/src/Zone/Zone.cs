@@ -5,13 +5,14 @@ using Map = FFXIVClientStructs.FFXIV.Client.Game.UI.Map;
 using MapMarkerData = FFXIVClientStructs.FFXIV.Client.Game.UI.MapMarkerData;
 using MarkerInfo = FFXIVClientStructs.FFXIV.Client.Game.UI.MarkerInfo;
 using Sheet = Lumina.Excel.Sheets;
+using TerritoryIntendedUse = FFXIVClientStructs.FFXIV.Client.Enums.TerritoryIntendedUse;
 
 namespace Umbra.Game;
 
 internal sealed class Zone : IZone
 {
     public uint                  Id                  { get; private set; }
-    public TerritoryType         Type                { get; private set; }
+    public TerritoryIntendedUse  Type                { get; private set; }
     public uint                  TerritoryId         { get; private set; }
     public string                Name                { get; private set; }
     public string                SubName             { get; private set; }
@@ -48,7 +49,7 @@ internal sealed class Zone : IZone
 
         Id                  = zoneId;
         MapSheet            = dataManager.GetExcelSheet<Sheet.Map>().GetRow(zoneId);
-        Type                = (TerritoryType)MapSheet.TerritoryType.Value.TerritoryIntendedUse.Value.RowId;
+        Type                = (TerritoryIntendedUse)MapSheet.TerritoryType.Value.TerritoryIntendedUse.RowId;
         TerritoryId         = MapSheet.TerritoryType.RowId;
         Name                = GetHousingZoneName() ?? MapSheet.PlaceName.Value.Name.ExtractText();
         SubName             = MapSheet.PlaceNameSub.Value.Name.ExtractText();
