@@ -38,6 +38,7 @@ internal sealed class CompassRenderer(
 
     [ConfigVariable("Markers.Compass.XOffset", "Markers", "MarkersCompass", -4096, 4096)]
     private static int CenterPointXOffset { get; set; } = 0;
+    private static bool viewportErrorLogged = false;
 
     [OnDraw(executionOrder: int.MaxValue)]
     private void OnUpdate()
@@ -50,6 +51,16 @@ internal sealed class CompassRenderer(
         uint    iconColor = (0xFFFFFFFFu).ApplyAlphaComponent(IconOpacity / 100f);
         Vector2 vpSize    = ImGui.GetMainViewport().Size;
         Vector2 workPos   = ImGui.GetMainViewport().WorkPos;
+        vpSize.X -= clampSize;
+        vpSize.Y -= clampSize;
+
+        if (vpSize.X <= float.Epsilon || vpSize.Y <= float.Epsilon) {
+            if (!viewportErrorLogged) {
+                Logger.Error($"Viewport size is too small for compass rendering: {vpSize}");
+                viewportErrorLogged = true;
+            }
+            return; // early return if viewport size somehow is smaller than the clampSize
+        }
 
         if (!gameCamera.WorldToScreen(player.Position, out Vector2 playerScreenPosition)) return;
 
@@ -72,8 +83,8 @@ internal sealed class CompassRenderer(
             Vector2 iconPos   = playerScreenPosition + direction * CompassRadius;
 
             // Clamp the icon position to the screen bounds.
-            iconPos.X = Math.Clamp(iconPos.X, clampSize, vpSize.X - clampSize);
-            iconPos.Y = Math.Clamp(iconPos.Y, clampSize, vpSize.Y - clampSize);
+            iconPos.X = Math.Clamp(iconPos.X, clampSize, vpSize.X);
+            iconPos.Y = Math.Clamp(iconPos.Y, clampSize, vpSize.Y);
 
             Vector2 p1 = iconPos - new Vector2(iconSize / 2) + workPos;
             Vector2 p2 = iconPos + new Vector2(iconSize / 2) + workPos;
