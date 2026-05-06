@@ -17,7 +17,7 @@ internal sealed class UmbraBindings : IDisposable
     public static int UiScale { get; set; } = 100;
 
     [ConfigVariable("General.UseGameMouseCursor", "General")]
-    public static bool UseGameMouseCursor { get; set; } = false;
+    public static bool UseGameMouseCursor { get; set; } = true;
 
     [ConfigVariable("General.ShowInputControlDescriptions", "General")]
     public static bool ShowInputControlDescriptions { get; set; } = true;
