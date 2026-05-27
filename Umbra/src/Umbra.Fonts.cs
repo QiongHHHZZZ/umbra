@@ -59,9 +59,20 @@ internal sealed class UmbraFonts
 
     public UmbraFonts()
     {
-        FontFamilies.Add("Dalamud Default", new(true, GetDalamudFontAsset("NotoSansCJKsc-Medium.otf")));
-        FontFamilies.Add("Dalamud Monospace", new(true, GetDalamudFontAsset("Inconsolata-Regular.ttf")));
-        FontFamilies.Add("Dalamud Icons", new(true, GetDalamudFontAsset("FontAwesomeFreeSolid.otf")));
+        FontFamilies.Add("Dalamud Default", ResolveFontConfig(
+            ["NotoSansCJKsc-Medium.otf", "NotoSansCJKjp-Medium.otf", "NotoSansCJKtc-Medium.otf"],
+            ["Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", "Arial"]
+        ));
+
+        FontFamilies.Add("Dalamud Monospace", ResolveFontConfig(
+            ["Inconsolata-Regular.ttf"],
+            ["Cascadia Mono", "Consolas", "Courier New"]
+        ));
+
+        FontFamilies.Add("Dalamud Icons", ResolveFontConfig(
+            ["FontAwesomeFreeSolid.otf"],
+            ["Font Awesome 6 Free Solid", "Font Awesome 5 Free Solid", "Segoe UI Symbol", "Arial"]
+        ));
 
         foreach (string name in FontRegistry.GetFontFamilies()) {
             FontFamilies.Add(name, new(false, name));
@@ -93,6 +104,31 @@ internal sealed class UmbraFonts
             "UIRes",
             name
         );
+    }
+
+    private static FontConfig ResolveFontConfig(string[] dalamudAssets, string[] fallbackFamilies)
+    {
+        foreach (var asset in dalamudAssets) {
+            var path = GetDalamudFontAsset(asset);
+
+            if (File.Exists(path)) {
+                return new(true, path);
+            }
+        }
+
+        var systemFonts = FontRegistry.GetFontFamilies().ToArray();
+
+        foreach (var family in fallbackFamilies) {
+            var installedFamily = systemFonts.FirstOrDefault(
+                name => string.Equals(name, family, StringComparison.OrdinalIgnoreCase)
+            );
+
+            if (installedFamily != null) {
+                return new(false, installedFamily);
+            }
+        }
+
+        return new(false, SKTypeface.Default.FamilyName);
     }
 
     private void OnCvarChanged(string name)
